@@ -35,7 +35,11 @@ namespace Resxr
 
             var elements = root.Elements("data")
                 .ToList()
-                .OrderBy(el => el.Attribute("name").Value.Replace(' ', '_'))
+                .OrderBy(el => el.Attribute("name")
+                                .Value
+                                .Replace(' ', '_')
+                                .Replace('-', '_')
+                        )
                 .ToList();
 
             foreach (var data in elements)
@@ -43,9 +47,26 @@ namespace Resxr
                 var valueElement = data.Element("value");   
 
                 var value = PrepareValueComment(valueElement.Value);
-                string key = data.Attribute("name").Value;
-                string name = data.Attribute("name").Value.Replace(' ', '_').Replace("[", "_").Replace("]", "_");
-                entries.AppendFormat(ENTRY, key, name, value, accessModifier);
+                string key = data.Attribute("name").Value.Replace("'", "\\'");
+                string name = data.Attribute("name").Value
+                                .Replace(' ', '_')
+                                .Replace("[", "_")
+                                .Replace("]", "_")
+                                .Replace("-", "_")
+                                .Replace("&", "_")
+                                .Replace("'", "_");
+
+                string entry = $@"
+        /// <summary>
+        ///   Looks up a localized string similar to {value}.
+        /// </summary>
+        {accessModifier} static string {name} {{
+            get {{
+                return ResourceManager.GetString(""{key}"", resourceCulture);
+            }}
+        }}
+        ";
+                entries.Append(entry);
             }
 
             var escapedClassName = className.Replace(".", "_");
@@ -147,16 +168,5 @@ result = result.Replace("& ", "&amp; ");
 
             return result;
         }
-
-    private static readonly string ENTRY = @"
-        /// <summary>
-        ///   Looks up a localized string similar to {2}.
-        /// </summary>
-        {3} static string {1} {{
-            get {{
-                return ResourceManager.GetString(""{0}"", resourceCulture);
-            }}
-        }}
-        ";
     }
 }
