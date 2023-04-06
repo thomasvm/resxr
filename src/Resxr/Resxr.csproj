@@ -8,6 +8,12 @@
     <TieredCompilation>true</TieredCompilation>
     <TieredCompilationQuickJit>true</TieredCompilationQuickJit>
     <RuntimeIdentifiers>win7-x86;win7-x64;osx-x64;linux-x64</RuntimeIdentifiers>
+
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>resxr</ToolCommandName>
+    <PackageOutputPath>./nupkg</PackageOutputPath>
+    <Version>0.0.1</Version>
+
   </PropertyGroup>
 
 </Project>
