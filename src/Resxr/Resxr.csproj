@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Description>Generates C# typed bindings for .resx files</Description>
-    <TargetFramework>net7.0</TargetFramework>
+    <Description>Manipulate .resx files from the comfort of your terminal</Description>
+    <TargetFramework>net6.0</TargetFramework>
     <AssemblyName>resxr</AssemblyName>
     <OutputType>Exe</OutputType>
     <TieredCompilation>true</TieredCompilation>
