@@ -11,6 +11,10 @@ namespace Resxr
     {
         private readonly XElement _root;
 
+        public ResxWriter()
+            : this(null)
+        { }
+
         public ResxWriter(string source)
         {
             _root = string.IsNullOrEmpty(source)
