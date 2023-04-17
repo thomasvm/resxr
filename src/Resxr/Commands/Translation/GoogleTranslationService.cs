@@ -16,9 +16,20 @@ namespace Resxr.Commands.Translation
 
         public GoogleTranslationService(IHttpClientFactory factory)
         {
+            const string ENV_NAME = "RESXR_GOOGLE_TRANSLATE_KEY";
+
             _factory = factory;
 
-            _apiKey = Environment.GetEnvironmentVariable("RESXR_GOOGLE_TRANSLATE_KEY");
+            _apiKey = Environment.GetEnvironmentVariable(ENV_NAME);
+
+            if (string.IsNullOrEmpty(_apiKey))
+                throw new InvalidOperationException($"You must set {ENV_NAME} to be able to use Google Translate provider");
+        }
+
+        public GoogleTranslationService(IHttpClientFactory factory, string apiKey)
+        {
+            _factory = factory;
+            _apiKey = apiKey;
         }
 
         public async Task<TranslationOutput> TranslateAsync(TranslationInput input)
@@ -63,22 +74,7 @@ namespace Resxr.Commands.Translation
             }
         }
 
-        public class TranslationInput
-        {
-            public string TargetLanguage { get; set; }
-
-            public string Text { get; set; }
-        }
-
-        public class TranslationOutput
-        {
-            public string Input { get; set; }
-
-            public string DetectedLanguage { get; set; }
-
-            public string Output { get; set; }
-        }
-
+        
         private void ValidateCulture(TranslationInput input)
         {
             if (string.IsNullOrEmpty(input.TargetLanguage))

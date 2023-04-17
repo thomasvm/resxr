@@ -28,6 +28,17 @@ namespace Resxr
             return _root.Elements("data").ToList();
         }
 
+        public IEnumerable<(string, string)> GetValues()
+        {
+            return Elements().Select(el =>
+            {
+                var key = el.Attribute("name")?.Value;
+                var value = el.Element("value")?.Value;
+
+                return (key, value);
+            });
+        }
+
         public bool Contains(string key)
         {
             var match = Find(key);

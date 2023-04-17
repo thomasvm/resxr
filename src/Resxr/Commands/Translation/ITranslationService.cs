@@ -11,4 +11,21 @@ namespace Resxr.Commands.Translation
     {
         Task<TranslationOutput> TranslateAsync(TranslationInput input);
     }
+
+    public class TranslationInput
+        {
+            public string TargetLanguage { get; set; }
+
+            public string Text { get; set; }
+        }
+
+        public class TranslationOutput
+        {
+            public string Input { get; set; }
+
+            public string DetectedLanguage { get; set; }
+
+            public string Output { get; set; }
+        }
+
 }
