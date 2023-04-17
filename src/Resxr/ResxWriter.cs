@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.Linq;
 
 namespace Resxr
@@ -22,6 +23,11 @@ namespace Resxr
                 : XElement.Parse(source);
         }
 
+        public IList<XElement> Elements()
+        {
+            return _root.Elements("data").ToList();
+        }
+
         public bool Contains(string key)
         {
             var match = Find(key);
@@ -29,9 +35,26 @@ namespace Resxr
             return match != null;
         }
 
-        public void Set(string key, string value, string comment)
-        { 
+        public void Set(string key, string value, string comment = null)
+        {
+            var match = Find(key);
 
+            if (match != null)
+            {
+                match.SetElementValue("value", value);
+                if (!string.IsNullOrEmpty(comment))
+                    match.SetElementValue("comment", comment);
+                return;
+            }
+
+            var newElenent = new XElement("data");
+            newElenent.SetAttributeValue(XNamespace.Xml + "space", "preserve");
+            newElenent.Add(new XElement("data", value));
+
+            if (!string.IsNullOrEmpty(comment))
+                newElenent.Add(new XElement("comment", comment));
+
+            _root.Add(newElenent);
         }
 
         private XElement Find(string key)
@@ -39,6 +62,21 @@ namespace Resxr
             return _root.Elements("data")
                 .Where(el => el.Attribute("name")?.Value == key)
                 .FirstOrDefault();
+        }
+
+        public string Export()
+        {
+            var stringBuilder = new StringBuilder();
+
+            var settings = new XmlWriterSettings();
+            settings.Indent = true;
+
+            using (var xmlWriter = XmlWriter.Create(stringBuilder, settings))
+            {
+                _root.Save(xmlWriter);
+            }
+
+            return stringBuilder.ToString();
         }
 
         private const string Empty = @"<?xml version=""1.0"" encoding=""utf-8""?>
