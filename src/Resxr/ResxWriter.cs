@@ -59,14 +59,15 @@ namespace Resxr
                 return;
             }
 
-            var newElenent = new XElement("data");
-            newElenent.SetAttributeValue(XNamespace.Xml + "space", "preserve");
-            newElenent.Add(new XElement("data", value));
+            var newElement = new XElement("data");
+            newElement.SetAttributeValue("name", key);
+            newElement.SetAttributeValue(XNamespace.Xml + "space", "preserve");
+            newElement.Add(new XElement("value", value));
 
             if (!string.IsNullOrEmpty(comment))
-                newElenent.Add(new XElement("comment", comment));
+                newElement.Add(new XElement("comment", comment));
 
-            _root.Add(newElenent);
+            _root.Add(newElement);
         }
 
         private XElement Find(string key)
