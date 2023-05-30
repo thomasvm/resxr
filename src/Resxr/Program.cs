@@ -58,7 +58,8 @@ namespace Resxr
             var translateCommand = new Command("translate", "Updates language .resx file to include missing keys and to translate them")
             {
                 fileOption,
-                cultureOption
+                cultureOption,
+                providerOption,
             };
             translateCommand.SetHandler(async (file, culture, provider) =>
             {
