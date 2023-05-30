@@ -53,7 +53,7 @@ namespace Resxr.Commands
 
             var export = output.Export();
 
-            File.WriteAllText(outputFilename, export);
+            File.WriteAllText(outputFilename, export, Encoding.UTF8);
         }
 
         private ITranslationService GetTranslationService(string provider)

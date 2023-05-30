@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -77,17 +78,28 @@ namespace Resxr
 
         public string Export()
         {
-            var stringBuilder = new StringBuilder();
-
             var settings = new XmlWriterSettings();
             settings.Indent = true;
+            settings.Encoding = Encoding.UTF8;
 
-            using (var xmlWriter = XmlWriter.Create(stringBuilder, settings))
+            using (var textWriter = new Utf8StringWriter())
             {
-                _root.Save(xmlWriter);
-            }
+                using (var xmlWriter = XmlWriter.Create(textWriter, settings))
+                {
+                    _root.Save(xmlWriter);                    
 
-            return stringBuilder.ToString();
+                    xmlWriter.Close();
+                    return textWriter.ToString();
+                }
+            }
+        }
+
+        public class Utf8StringWriter : StringWriter
+        {
+            public override Encoding Encoding
+            {
+                get { return Encoding.UTF8; }
+            }
         }
 
         private const string Empty = @"<?xml version=""1.0"" encoding=""utf-8""?>
