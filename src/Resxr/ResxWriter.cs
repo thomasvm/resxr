@@ -56,7 +56,7 @@ namespace Resxr
                 match.SetElementValue("value", value);
                 if (!string.IsNullOrEmpty(comment))
                     match.SetElementValue("comment", comment);
-                return;
+                return; 
             }
 
             var newElement = new XElement("data");
