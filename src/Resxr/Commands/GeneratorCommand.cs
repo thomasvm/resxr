@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,7 +13,7 @@ namespace Resxr.Commands
             var className = Path.GetFileNameWithoutExtension(input.Name);
             var @namespace = GetNamespace(input);
 
-            var output = await GetStronglyTypeCsFileForResx(
+            var output = await GetStronglyTypedCsFileForResx(
                 input.FullName,
                 @namespace,
                 className,
@@ -39,21 +38,17 @@ namespace Resxr.Commands
 
                 if (csProjFiles.Any())
                 {
-                  Console.WriteLine($"Got csproj files in {directory.Name}, returning {result}");
                   return result;
                 }
 
-                Console.WriteLine($"Got no csproj files, extending...");
                 directory = directory.Parent;
                 result = $"{directory.Name}.{result}";
-                Console.WriteLine($" => {result}");
-
             }
 
             return result;
         }
 
-        private static async Task<string> GetStronglyTypeCsFileForResx(
+        private static async Task<string> GetStronglyTypedCsFileForResx(
             string xmlPath,
             string moduleName,
             string className,
