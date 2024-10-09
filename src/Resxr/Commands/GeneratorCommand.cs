@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,11 +12,11 @@ namespace Resxr.Commands
         public async Task Invoke(FileInfo input)
         {
             var className = Path.GetFileNameWithoutExtension(input.Name);
-            var dir = input.Directory.Name;
+            var @namespace = GetNamespace(input);
 
             var output = await GetStronglyTypeCsFileForResx(
                 input.FullName,
-                dir,
+                @namespace,
                 className,
                 "public"
             );
@@ -24,6 +25,32 @@ namespace Resxr.Commands
 
             var outputPath = Path.Combine(input.Directory.FullName, designerFilename);
             await File.WriteAllTextAsync(outputPath, output);
+        }
+
+        private string GetNamespace(FileInfo input)
+        {
+            var result = input.Directory.Name;
+
+            var directory = input.Directory;
+
+            while(directory != null)
+            {
+                var csProjFiles = directory.GetFileSystemInfos("*.csproj");
+
+                if (csProjFiles.Any())
+                {
+                  Console.WriteLine($"Got csproj files in {directory.Name}, returning {result}");
+                  return result;
+                }
+
+                Console.WriteLine($"Got no csproj files, extending...");
+                directory = directory.Parent;
+                result = $"{directory.Name}.{result}";
+                Console.WriteLine($" => {result}");
+
+            }
+
+            return result;
         }
 
         private static async Task<string> GetStronglyTypeCsFileForResx(
