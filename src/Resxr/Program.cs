@@ -16,7 +16,9 @@ namespace Resxr
                     {
                         services.AddScoped<GeneratorCommand>();
                         services.AddScoped<TranslateMissingKeysCommand>();
+                        services.AddScoped<ReportMissingKeysCommand>();
                         services.AddHttpClient();
+                        services.AddLogging();
                     }
                 )
                 .UseConsoleLifetime();
@@ -80,6 +82,30 @@ namespace Resxr
                 providerOption
             );
             rootCommand.Add(translateCommand);
+
+            // 3. Report missing keys
+            var missingKeyCulture = new Option<string>(
+                name: "--culture",
+                description: "The target culture to check"
+            );
+            var reportMissingKeysCommand = new Command(
+                "report",
+                "Reports any missing keys in a resx file for a given culture"
+            )
+            {
+                fileArgument,
+                missingKeyCulture,
+            };
+            reportMissingKeysCommand.SetHandler(
+                async (file, culture) =>
+                {
+                    var command = host.Services.GetService<ReportMissingKeysCommand>();
+                    await command.InvokeAsync(file, culture);
+                },
+                fileArgument,
+                missingKeyCulture
+            );
+            rootCommand.Add(reportMissingKeysCommand);
 
             return rootCommand.InvokeAsync(args).Result;
         }
